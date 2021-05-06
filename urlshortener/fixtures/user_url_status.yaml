@@ -1,0 +1,20 @@
+- model: urlshortener.UserUrlStatus
+  pk: 1
+  fields:
+    descr: pending
+- model: urlshortener.UserUrlStatus
+  pk: 2
+  fields:
+    descr: resolved
+- model: urlshortener.UserUrlStatus
+  pk: 3
+  fields:
+    descr: paused
+- model: urlshortener.UserUrlStatus
+  pk: 8
+  fields:
+    descr: deleted
+- model: urlshortener.UserUrlStatus
+  pk: 9
+  fields:
+    descr: blocked
