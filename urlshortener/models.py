@@ -5,6 +5,7 @@ from django.contrib import admin
 from proj.settings import SHORTENED_HOST_NAME
 import hashlib
 from urlshortener.exceptions import UserUrlExistsAlreadyException
+from .helpers import UrlHelper
 
 
 class UserUrlStatus(models.Model):
@@ -86,3 +87,6 @@ class BlockedDomain(models.Model):
             models.Index(fields=['domain']),
         ]
 
+    def save(self, *args, **kwargs):
+        self.domain = UrlHelper.getDomain(self.domain)
+        super(BlockedDomain, self).save(*args, **kwargs)

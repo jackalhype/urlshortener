@@ -11,7 +11,8 @@ class UserUrlAdmin(admin.ModelAdmin):
     readonly_fields = ('resolve_path', 'resolve_host', 'user_domain')
     # list
     list_display = ('user_url', 'short_url_no_schema', 'pub_date')
-    list_filter = ('user_domain', 'user_url',)
+    search_fields = ('user_domain', 'user_url', )
+    list_per_page = 100
 
 
 class BlockedDomainAdmin(admin.ModelAdmin):
@@ -19,6 +20,7 @@ class BlockedDomainAdmin(admin.ModelAdmin):
     list_display = ('pk', 'domain', 'block_date')
     list_display_links = ('pk',)
     list_editable = ('domain',)
+    list_per_page = 100
 
 
 # Register your models here.
