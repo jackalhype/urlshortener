@@ -5,7 +5,7 @@ from django.contrib import admin
 from proj.settings import SHORTENED_HOST_NAME
 import hashlib
 from urlshortener.exceptions import UserUrlExistsAlreadyException
-from .helpers import UrlHelper
+from .helpers import UrlHelper, IncorrectUrlException
 
 
 class UserUrlStatus(models.Model):
@@ -23,8 +23,8 @@ class UserUrl(models.Model):
     user_url_hash = models.CharField(max_length=32, default='' )
     create_date = models.DateTimeField('date created', default=timezone.now)
     pub_date = models.DateTimeField('date published', null=True, blank=True)
-    resolve_path = models.CharField(max_length=12, default='')
-    resolve_host = models.CharField(max_length=16, default=SHORTENED_HOST_NAME)
+    resolve_path = models.CharField(max_length=12, null=True)
+    resolve_host = models.CharField(max_length=16, null=True)
     user_domain = models.CharField(max_length=100, blank=True)
     status = models.ForeignKey(UserUrlStatus, default=1, on_delete=models.RESTRICT)
     block_reason = models.CharField(max_length=120, null=True, blank=True)
@@ -34,10 +34,11 @@ class UserUrl(models.Model):
         db_table = "user_url"
         indexes = [
             models.Index(fields=['resolve_host']),
-            models.Index(fields=['resolve_path', 'resolve_host']),
+            # models.Index(fields=['resolve_path', 'resolve_host']),
             models.Index(fields=['user_domain', 'status']),
             models.Index(fields=['user_url_hash']),
         ]
+        unique_together = [['resolve_path', 'resolve_host'], ]
 
     @admin.display(
         boolean=False,
@@ -76,7 +77,7 @@ class UserUrl(models.Model):
             return str(self.resolve_host) + '/' + str(self.resolve_path)
         return str(schema) + '://' + str(self.resolve_host) + '/' + str(self.resolve_path)
 
-    def clean(self, *args, **kwargs):
+    def clean(self):
         h = self.makeUserUrlHash()
         if h != self.user_url_hash:
             self.user_url_hash = h
@@ -111,8 +112,14 @@ class BlockedDomain(models.Model):
             models.Index(fields=['domain']),
         ]
 
+
+    def clean(self):
+        try:
+            self.domain = UrlHelper.getDomain(self.domain)
+        except IncorrectUrlException:
+            raise ValidationError({'domain': ["incorrect domain", ]})
+
     def save(self, *args, **kwargs):
-        self.domain = UrlHelper.getDomain(self.domain)
         super(BlockedDomain, self).save(*args, **kwargs)
         from .services import BlockUserUrlsByDomainService
         BlockUserUrlsByDomainService.blockDomain(domain=self.domain)
