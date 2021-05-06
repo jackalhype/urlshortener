@@ -1,11 +1,14 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.contrib import admin
 from proj.settings import SHORTENED_HOST_NAME
 import hashlib
-from urlshortener.exceptions import UserUrlExistsAlreadyException
-from .helpers import UrlHelper, IncorrectUrlException
+from urlshortener.exceptions import UserUrlExistsAlreadyException, IncorrectUrlException
+from .helpers import UrlHelper
+import sys
 
 
 class UserUrlStatus(models.Model):
@@ -112,7 +115,6 @@ class BlockedDomain(models.Model):
             models.Index(fields=['domain']),
         ]
 
-
     def clean(self):
         try:
             self.domain = UrlHelper.getDomain(self.domain)
@@ -123,4 +125,17 @@ class BlockedDomain(models.Model):
         super(BlockedDomain, self).save(*args, **kwargs)
         from .services import BlockUserUrlsByDomainService
         BlockUserUrlsByDomainService.blockDomain(domain=self.domain)
+
+    def __str__(self):
+        return self.domain
+
+@receiver(post_save, sender=UserUrl)
+def user_url_after_save(sender, **kwargs):
+    model = kwargs['instance']
+    if not model.resolve_path:
+        from .services import MakeShortPathService
+        serv = MakeShortPathService()
+        if serv.makeShortPath(user_url=model):
+            model.pub_date = timezone.now()
+            model.save()
 

@@ -1,5 +1,8 @@
 from urllib.parse import urlsplit
 
+from urlshortener.exceptions import IncorrectUrlException
+
+
 class UrlHelper:
     """
     urlsplit incorrect when no schema...
@@ -18,5 +21,3 @@ class UrlHelper:
         return p.netloc
 
 
-class IncorrectUrlException(Exception):
-    pass

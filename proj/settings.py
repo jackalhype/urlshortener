@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'gw@*fafw43S4gR9fe@3f&1F0F4s63a=cd-fef!-_fg(uf2f90yh$2g4'
 
-SHORTENED_HOST_NAME='localhost'
+SHORTENED_HOST_NAME='127.0.0.1:8000'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
