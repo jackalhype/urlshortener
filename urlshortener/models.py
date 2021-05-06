@@ -47,6 +47,22 @@ class UserUrl(models.Model):
     def short_url_no_schema(self):
         return self._short_url(schema='')
 
+    @admin.display(
+        boolean=True,
+        ordering='-pub_date',
+        description='active',
+    )
+    def is_active(self):
+        return self.status.pk == 2
+
+    @admin.display(
+        boolean=True,
+        ordering='-pub_date',
+        description='blocked',
+    )
+    def is_blocked(self):
+        return self.status.pk == 9
+
     def short_url_http(self):
         return self._short_url(schema='http')
 
@@ -60,14 +76,19 @@ class UserUrl(models.Model):
             return str(self.resolve_host) + '/' + str(self.resolve_path)
         return str(schema) + '://' + str(self.resolve_host) + '/' + str(self.resolve_path)
 
-    def save(self, *args, **kwargs):
+    def clean(self, *args, **kwargs):
         h = self.makeUserUrlHash()
         if h != self.user_url_hash:
             self.user_url_hash = h
         if self.checkIfUserUrlExistsAlready(self):
             # raise UserUrlExistsAlreadyException("Url already in storage")
-            pass #raise ValidationError({'user_url': ["error message", ]})
-        super(UserUrl, self).save(*args, **kwargs)
+            raise ValidationError({'user_url': ["Url already in storage", ]})
+        self.user_domain = UrlHelper.getDomain(self.user_url)
+        # TODO:
+        if self.checkIfDomainBlocked(self):
+            if (not self.status) or (self.status.pk == 1):
+                raise ValidationError({'user_url': ["Domain blocked", ]})
+
 
     def makeUserUrlHash(self):
          return hashlib.md5(str(self.user_url).encode('utf-8')).hexdigest()
@@ -75,6 +96,9 @@ class UserUrl(models.Model):
     def checkIfUserUrlExistsAlready(self, obj):
         found = UserUrl.objects.filter(user_url_hash=obj.user_url_hash).exclude(pk=obj.pk)
         return found.count() > 0
+
+    def checkIfDomainBlocked(self, obj):
+        return BlockedDomain.objects.filter(domain=obj.user_domain).count() > 0
 
 
 class BlockedDomain(models.Model):
@@ -90,3 +114,6 @@ class BlockedDomain(models.Model):
     def save(self, *args, **kwargs):
         self.domain = UrlHelper.getDomain(self.domain)
         super(BlockedDomain, self).save(*args, **kwargs)
+        from .services import BlockUserUrlsByDomainService
+        BlockUserUrlsByDomainService.blockDomain(domain=self.domain)
+

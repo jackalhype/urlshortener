@@ -10,7 +10,7 @@ class UserUrlAdmin(admin.ModelAdmin):
     ]
     readonly_fields = ('resolve_path', 'resolve_host', 'user_domain')
     # list
-    list_display = ('user_url', 'short_url_no_schema', 'pub_date')
+    list_display = ('user_url', 'short_url_no_schema', 'pub_date', 'is_active', 'is_blocked')
     search_fields = ('user_domain', 'user_url', )
     list_per_page = 100
 
