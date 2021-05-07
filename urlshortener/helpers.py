@@ -1,5 +1,6 @@
 from urllib.parse import urlsplit
-
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 from urlshortener.exceptions import IncorrectUrlException
 
 
@@ -20,4 +21,11 @@ class UrlHelper:
             return p2.netloc
         return p.netloc
 
-
+    @classmethod
+    def urlIsCorrect(cls, url):
+        val = URLValidator()
+        try:
+            val(url)
+        except ValidationError:
+            return False
+        return True

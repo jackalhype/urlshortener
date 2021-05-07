@@ -4,9 +4,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.contrib import admin
-from proj.settings import SHORTENED_HOST_NAME
 import hashlib
-from urlshortener.exceptions import UserUrlExistsAlreadyException, IncorrectUrlException
+from urlshortener.exceptions import IncorrectUrlException
 from .helpers import UrlHelper
 import sys
 
@@ -88,10 +87,11 @@ class UserUrl(models.Model):
             # raise UserUrlExistsAlreadyException("Url already in storage")
             raise ValidationError({'user_url': ["Url already in storage", ]})
         self.user_domain = UrlHelper.getDomain(self.user_url)
-        # TODO:
         if self.checkIfDomainBlocked(self):
             if (not self.status) or (self.status.pk == 1):
                 raise ValidationError({'user_url': ["Domain blocked", ]})
+        if not UrlHelper.urlIsCorrect(self.user_url):
+            raise ValidationError({'user_url': ["Malformed url", ]})
 
 
     def makeUserUrlHash(self):
