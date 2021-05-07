@@ -1,5 +1,5 @@
-#URL SHORTENER, Django 3.2
-##bit.ly, goo.gl, rb.gy and so forth.
+# URL SHORTENER, Django 3.2
+## bit.ly, goo.gl, rb.gy and so forth.
 
 Developed with:
 
@@ -8,7 +8,7 @@ Developed with:
 `Django Framework 3.2`
 `sqlite3`
 
-##Dev Deployment:
+## Dev Deployment:
 
 ### proj/settings.py
 SHORTENED_HOST_NAME // <-- set         
