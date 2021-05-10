@@ -79,7 +79,7 @@ class UserUrl(models.Model):
             return str(self.resolve_host) + '/' + str(self.resolve_path)
         return str(schema) + '://' + str(self.resolve_host) + '/' + str(self.resolve_path)
 
-    def clean(self):
+    def prepareForSave(self):
         h = self.makeUserUrlHash()
         if h != self.user_url_hash:
             self.user_url_hash = h
@@ -93,12 +93,15 @@ class UserUrl(models.Model):
         if not UrlHelper.urlIsCorrect(self.user_url):
             raise ValidationError({'user_url': ["Malformed url", ]})
 
+    def clean(self):
+        self.prepareForSave()
 
     def makeUserUrlHash(self):
          return hashlib.md5(str(self.user_url).encode('utf-8')).hexdigest()
 
     def checkIfUserUrlExistsAlready(self, obj):
         found = UserUrl.objects.filter(user_url_hash=obj.user_url_hash).exclude(pk=obj.pk)
+        # let's forget collisions this time, ok?
         return found.count() > 0
 
     def checkIfDomainBlocked(self, obj):

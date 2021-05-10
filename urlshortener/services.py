@@ -25,7 +25,7 @@ class MakeShortPathService:
         """
         I think we use 62 symbols [a-zA-Z0-9]
         And simply fill randomly our 7 symbols until our crontask (which we create later) shows us,
-        that we filled up to 3% of 62 ** 8
+        that we filled up to 3% of 62 ** 7
         Then we start using 8 symbols. And so on.
         10 dice rolling attempts with only 3% filled kinda guarantee us 99.99999% of success,
         which close to any reasonable hosting uptime. So we good people always...

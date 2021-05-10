@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 Django = "==3.2"
 pyyaml = ">=5.4"
+djangorestframework = ">=3.12"
+django-cors-headers = ">=3.7"
 
 [dev-packages]
 
