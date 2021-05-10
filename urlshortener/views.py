@@ -35,13 +35,7 @@ class UserUrlApiView(APIView):
 
         model, err = req_ser.create(req_ser.validated_data)
         if err:
-            models = UserUrl.objects.filter(user_url_hash=model.user_url_hash)
-            if models.count() > 0:
-                model = models[0]
-            else:
-                return Response({'errors': err}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            model.save()
+            return Response({'errors': err}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         resp_ser = serializers.UserUrlSerializer(model)
         return Response({'data': resp_ser.data}, status=status.HTTP_201_CREATED)

@@ -25,10 +25,16 @@ class UserUrlPostSerializer(serializers.ModelSerializer):
             'user_url',
         ]
 
-    def create(self, validated_data, no_save=True, **kwargs):
+    def create(self, validated_data, no_save=False, **kwargs):
         model = UserUrl(user_url=validated_data['user_url'])
         try:
             model.prepareForSave()
         except ValidationError as e:
-            return (model, e)
+            models = UserUrl.objects.filter(user_url_hash=model.user_url_hash)
+            if models.count() > 0:
+                model = models[0]
+                return (model, None)
+            else:
+                return (model, e)
+        model.save()
         return (model, None)
