@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import UrlInputField from './components/UrlInputField'
+import ShorteningForm from './components/ShorteningForm'
 
 function App() {
   return (
@@ -8,10 +8,7 @@ function App() {
       <header className="App-header">
         <h1>Free Url Shortener</h1>
         <div className="app-descr">This is a free tool to shorten URLs. Create short & memorable links in seconds.</div>
-        <div className="app-form-wrap" >
-          <UrlInputField/>
-
-        </div>
+        <ShorteningForm />
       </header>
     </div>
   );

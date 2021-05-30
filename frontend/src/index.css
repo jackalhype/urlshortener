@@ -24,6 +24,14 @@ h1 {
   padding-bottom: 15px;
 }
 
+ul {
+  list-style: none;
+}
+
+a {
+  color: rgb(221, 181, 4);
+}
+
 input[type="button"] {
   border: none;
   outline:none;
@@ -68,5 +76,37 @@ input[type="button"] {
 .url-input-submit-btn:focus,
 .url-input-submit-btn:hover {
   background-color: #2c96df;
+  cursor: pointer;
+}
+
+.shortened-urls-list {
+  padding-top: 16px;
+  font-size: 0.75em;
+}
+
+.shortened-url-row > div {
+  display:inline-block;  
+  padding: 5px;
+  word-wrap: anywhere;
+}
+
+.shortened-url-row__orig-url {
+  width: 57%;
+  padding: 5px 15px 5px 5px;
+  text-align: left;
+}
+
+.shortened-url-row__result-url {
+  width: 32%;
+  padding: 5px 15px 5px 5px;
+  vertical-align: top;
+}
+
+.shortened-url-row__btns {
+  width: 10%;
+  vertical-align: top;
+}
+
+button {
   cursor: pointer;
 }

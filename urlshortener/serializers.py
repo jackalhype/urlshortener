@@ -16,6 +16,9 @@ class UserUrlSerializer(serializers.ModelSerializer):
             'block_date',
             'user_url_hash',
             'user_domain',
+            'short_url_http',
+            'short_url_https',
+            'short_url_no_schema',
         ]
 
 class UserUrlPostSerializer(serializers.ModelSerializer):
