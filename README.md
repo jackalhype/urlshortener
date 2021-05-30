@@ -1,4 +1,4 @@
-# URL SHORTENER, Django 3.2
+# URL SHORTENER, Django 3.2, React.js 17
 ## bit.ly, goo.gl, rb.gy and so forth.
 
 Developed with:
