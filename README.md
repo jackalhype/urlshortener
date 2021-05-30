@@ -7,6 +7,7 @@ Developed with:
 `python 3.7`
 `Django Framework 3.2`
 `sqlite3`
+`react 17`
 
 ## Dev Deployment:
 
@@ -28,5 +29,6 @@ python manage.py runserver
 http://127.0.0.1:8000/admin/    
 #### boss:1234
 
-
+http://127.0.0.1:3000/
+#### react front
 
